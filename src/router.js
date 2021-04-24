@@ -37,7 +37,25 @@ const router = new VueRouter({
                     name: "Pegawai",
                     meta: {title: 'Pegawai'},
                     component: importComponent('DataMaster/Pegawai')
-                }
+                },
+                {
+                    path: "/meja",
+                    name: "Meja",
+                    meta: {title: 'Meja'},
+                    component: importComponent('DataMaster/Meja')
+                },
+                {
+                    path: "/stokmasuk",
+                    name: "StokMasuk",
+                    meta: {title: 'Stok Masuk'},
+                    component: importComponent('Stok/StokMasuk')
+                },
+                {
+                    path: "/reservasi",
+                    name: "Reservasi",
+                    meta: {title: 'Reservasi'},
+                    component: importComponent('Transaksi/Reservasi')
+                },
                 // To do list
             //     {
             //     path: "/gd",

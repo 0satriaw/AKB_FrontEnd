@@ -1,7 +1,7 @@
 <!-- @format -->
 <template>
     <v-main class="list py-2 mx-4">
-        <h3 class="text-center display-2 font-weight-bold mb-5 red--text text--darken-4">Data Pelanggan</h3>
+        <h3 class="text-center display-2 font-weight-bold mb-5 red--text text--darken-4">Data Stok Masuk</h3>
         <v-card class="py-3">
             <v-card-title>
                 <v-text-field
@@ -19,7 +19,7 @@
                     Tambah
                 </v-btn>
             </v-card-title>
-            <v-data-table class="pa-2 mx-2 elevation-3" :headers="headers" :items="pelanggans" :search="search">
+            <v-data-table class="pa-2 mx-2 elevation-3" :headers="headers" :items="stokmasuks" :search="search">
                 <!-- nomer using id -->
                 <!-- <template v-slot:[`item.no`]="{ item }">
                     {{item.id}}
@@ -39,37 +39,65 @@
         <v-dialog v-model="dialog" persistent max-width="600px">
             <v-card class="">
                 <v-card-title class=" pa-5 justify-center red darken-4">
-                    <span class="headline font-weight-bold white--text">{{ formTitle }} Data Pelanggan</span>
+                    <span class="headline font-weight-bold white--text">{{ formTitle }} Data Stok Masuk</span>
                 </v-card-title>
                 <v-card-text>
                     <v-container>
                         <v-form v-model="valid" ref="form">
                             <v-row>
-                                <v-col>
-                                    <v-text-field
-                                        v-model="form.nama_pelanggan"
-                                        label="Nama Pelanggan"
-                                        :rules="namaRules"
-                                        required
-                                    ></v-text-field>
+                                 <v-col >
+                                    <v-select
+                                    :items="sNamaBahans"
+                                    label="Nama Bahan"
+                                    v-model="form.nama_bahan"
+                                    :rules="tipeRules"
+                                    required
+                                    ></v-select>
+                                </v-col>
+                                <v-col >
+                                    <v-menu
+                                        v-model="menu2"
+                                        :close-on-content-click="false"
+                                        :nudge-right="30"
+                                        transition="scale-transition"
+                                        offset-y
+                                        min-width="auto"
+                                    >
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-text-field
+                                                v-model="form.tanggal_masuk"
+                                                label="Tanggal Stok Masuk"
+                                                prepend-icon="mdi-calendar"
+                                                readonly
+                                                v-bind="attrs"
+                                                v-on="on"
+                                            ></v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                        color="#F9A825"
+                                        v-model="form.tanggal_masuk"
+                                        @input="menu2 = false"
+                                        ></v-date-picker>
+                                    </v-menu>
                                 </v-col>
                             </v-row>
                             <v-row>
-                                <v-col class="col-md-8">
+                                <v-col>
                                     <v-text-field
-                                        v-model="form.email"
-                                        label="Email"
-                                        :rules="emailRules"
+                                        v-model="form.jumlah"
+                                        label="Jumlah"
+                                        :rules="jumlahRules"
                                         required
+                                        type="number"
                                     ></v-text-field>
                                 </v-col>
                                 <v-col>
                                      <v-text-field
-                                        v-model="form.no_telp"
-                                        label="No Telepon"
-                                        type="number"
-                                        :rules="noRules"
+                                        v-model="form.biaya"
+                                        label="Harga Beli"
+                                        :rules="hargaRules"
                                         required
+                                        type="number"
                                     ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -93,7 +121,7 @@
                     <span class="headline font-weight-bold white--text">Peringatan!</span>
                 </v-card-title>
                 <v-card-text class="pt-5 font-weight-bold">
-                    Apakah anda yakin ingin menghapus pelanggan ini?
+                    Apakah anda yakin ingin menghapus data stok masuk stokmasuk ini?
                 </v-card-text>
                 <v-card-actions class="justify-center">
                     <v-btn color="blue darken-1" rounded text @click="dialogConfirm=false">
@@ -114,9 +142,12 @@
 
 <script>
     export default {
-        name:"Pelanggan",
+        name:"StokMasuk",
         data(){
             return{
+                menu: false,
+                modal: false,
+                menu2: false,
                 inputType: 'Tambah',
                 load: false,
                 snackbar: false,
@@ -126,34 +157,41 @@
                 dialog: false,
                 dialogConfirm: false,
                 valid: false,
-                namaRules:[
-                    (v) => !!v || 'Nama Pelanggan tidak boleh kosong ',
+                hargaRules:[
+                    (v) => !!v || 'Harga beli tidak boleh kosong',
+                    (v) => v>0 || 'Harga beli harus lebih dari 0',
                 ],
-                noRules:[
-                    (v) => !v || /^08[0-9]{8,10}$/.test(v) || 'Nomer telepon harus valid',
+                tipeRules:[
+                    (v) => !!v || 'Tipe stokmasuk tidak boleh kosong ',
                 ],
-                 emailRules: [ 
-                    v => !v || /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'Email harus valid',
+                jumlahRules:[
+                    (v) => !!v || 'Jumlah tidak boleh kosong',
+                    (v) => v>0 || 'Stok masuk harus lebih dari 0',
                 ],
                 headers:[
                     // {text:"No", value:"no"},
                     {
-                        text:"Nama Pelanggan",
+                        text:"Nama Bahan",
                         align: "start",
                         sortable: true,
-                        value: "nama_pelanggan",
+                        value: "nama_bahan",
                     },
-                    {text:"Email", value:"email"},
-                    {text:"Nomer Telepon", value:"no_telp"},
+                    {text:"Stok Masuk", value:"jumlah"},
+                    {text:"Harga Beli", value:"biaya"},
+                    {text:"Tanggal Masuk", value:"tanggal_masuk"},
                     {text:"Actions", value:"actions"},
                 ],
-                pelanggan: new FormData,
-                pelanggans: [],
+                stokmasuk: new FormData,
+                stokmasuks: [],
+                bahans:[],
+                sNamaBahans:[],
                 form:{
-                    nama_pelanggan: '',
-                    email: '',
-                    no_telp: '',
-                    status_hapus:0,
+                    id: '',
+                    id_bahan: '',
+                    jumlah: '',
+                    biaya: '',
+                    tanggal_masuk:new Date().toISOString().substr(0, 10),
+                    nama_bahan:'',
                 },
                 deleteId: '',
                 editId: ''
@@ -169,26 +207,47 @@
                    }
                }
             },
-            //read data pelanggan
+            
+            cekIdBahan(){
+                for (let index = 0; index < this.bahans.length; index++) {
+                    if(this.bahans[index].nama_bahan==this.form.nama_bahan){
+                        this.form.id_bahan=this.bahans[index].id;
+                    }
+                }
+            },
+            //read Data Stok Masuk
             readData(){
-                var url = this.$api + '/pelanggan'
+                var url = this.$api + '/stokmasuk'
                 this.$http.get(url,{
                         headers:{
                             'Authorization': 'Bearer ' + localStorage.getItem('token')
                         }
                     }).then(response =>{
-                    this.pelanggans = response.data.data
+                    this.stokmasuks = response.data.data
+                  
                 })
             },
+            readDataBahan(){
+                var url = this.$api + '/bahan'
+                this.$http.get(url,{
+                        headers:{
+                            'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        }
+                    }).then(response =>{
+                    this.bahans = response.data.data
+                    this.initNamaBahan()
+               })
+            },
             save(){
-                this.pelanggan.append('nama_pelanggan', this.form.nama_pelanggan);
-                this.pelanggan.append('email', this.form.email);
-                this.pelanggan.append('no_telp', this.form.no_telp);
-                this.pelanggan.append('status_hapus', 0);
+                this.cekIdBahan()
+                this.stokmasuk.append('id_bahan', this.form.id_bahan);
+                this.stokmasuk.append('jumlah', this.form.jumlah);
+                this.stokmasuk.append('biaya', this.form.biaya);
+                this.stokmasuk.append('tanggal_masuk', this.form.tanggal_masuk);
 
-                var url = this.$api + '/pelanggan/'
+                var url = this.$api + '/stokmasuk'
                 this.load = true
-                this.$http.post(url, this.pelanggan, {
+                this.$http.post(url, this.stokmasuk, {
                     headers: {
                         'Authorization': 'Bearer ' + localStorage.getItem('token')
                         }
@@ -208,13 +267,14 @@
                     })
             },
             update(){
+                this.cekIdBahan()
                 let newData = {
-                    nama_pelanggan: this.form.nama_pelanggan,
-                    email: this.form.email,
-                    no_telp: this.form.no_telp,
-                    status_hapus: this.form.status_hapus
+                    id_bahan: this.form.id_bahan,
+                    jumlah: this.form.jumlah,
+                    biaya: this.form.biaya,
+                    tanggal_masuk: this.form.tanggal_masuk
                     }
-                    var url = this.$api + '/pelanggan/' + this.editId;
+                    var url = this.$api + '/stokmasuk/' + this.editId;
                     this.load = true
                     this.$http.put(url, newData, {   
                     headers:{
@@ -230,46 +290,73 @@
                     this.resetForm();
                     this.inputType='Tambah';
                 }).catch(error =>{
-                    this.error_message = error.respons.data.message;
-                    this.color="red"
-                    this.snackbar=true;
-                    this.load = false;
-                })
-            },
-            //hapus data pelanggan
-            deleteData(){
-                //menghapus data pelanggan
-               let newData = {
-                    status_hapus: 1
-                    }
-                    var url = this.$api + '/dpelanggan/' + this.deleteId;
-                    this.load = true
-                    this.$http.put(url, newData, {   
-                    headers:{
-                            'Authorization': 'Bearer ' + localStorage.getItem('token')
-                        }
-                    }).then(response =>{
-                    this.error_message= response.data.message;
-                    this.color="green"
-                    this.snackbar=true;
-                    this.load = false;
-                    this.dialogConfirm = false;
-                    this.readData();//mengambildata
-                    this.resetForm();
-                    this.inputType='Tambah';
-                }).catch(error =>{
                     this.error_message = error.response.data.message;
                     this.color="red"
                     this.snackbar=true;
                     this.load = false;
                 })
             },
+            //hapus Data Stok Masuk soft delete?
+            // deleteDatasoft(){
+            //     //menghapus Data Stok Masuk
+            //    let newData = {
+            //         status_hapus: 1
+            //         }
+            //         var url = this.$api + '/dbahan/' + this.deleteId;
+            //         this.load = true
+            //         this.$http.put(url, newData, {   
+            //         headers:{
+            //                 'Authorization': 'Bearer ' + localStorage.getItem('token')
+            //             }
+            //         }).then(response =>{
+            //         this.error_message= response.data.message;
+            //         this.color="green"
+            //         this.snackbar=true;
+            //         this.load = false;
+            //         this.dialogConfirm = false;
+            //         this.readData();//mengambildata
+            //         this.resetForm();
+            //         this.inputType='Tambah';
+            //     }).catch(error =>{
+            //         this.error_message = error.response.data.message;
+            //         this.color="red"
+            //         this.snackbar=true;
+            //         this.load = false;
+            //     })
+            // },
+            deleteData(){
+                //menghapus data produk
+                var url = this.$api+ '/stokmasuk/'+this.deleteId;
+                //data dihapus berdasarkan id
+                this.$http.delete(url, {
+                    headers:{
+                            'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        }
+                    }).then(response =>{
+                    this.dialogConfirm = false;
+                    this.error_message= response.data.message;
+                    this.color="green"
+                    this.snackbar=true;
+                    this.load = false;
+                    this.close();
+                    this.readData();//mengambildata
+                    this.resetForm();
+                    this.inputType='Tambah';
+                }).catch(error =>{
+                    this.error_message = error.data.message;
+                    this.color="red"
+                    this.snackbar=true;
+                    this.load = false;
+                })
+            },
             editHandler(item){
+                console.log(this.bahans);
                 this.inputType = 'Ubah';
                 this.editId = item.id;
-                this.form.nama_pelanggan = item.nama_pelanggan;
-                this.form.email = item.email;
-                this.form.no_telp = item.no_telp;
+                this.form.nama_bahan = item.nama_bahan;
+                this.form.jumlah = item.jumlah;
+                this.form.biaya = item.biaya;
+                this.form.tanggal_masuk = item.tanggal_masuk;
                 this.dialog = true; 
             },
             deleteHandler(id){
@@ -289,11 +376,19 @@
             },
             resetForm(){
                 this.form ={
-                    nama_pelanggan: '',
-                    email: '',
-                    no_telp: '',
+                    id: '',
+                    id_bahan: '',
+                    jumlah: '',
+                    biaya: '',
+                    tanggal_masuk:new Date().toISOString().substr(0, 10),
+                    nama_bahan:'',
                 };
             },
+            initNamaBahan(){
+                for (let index = 0; index < this.bahans.length; index++) {
+                    this.sNamaBahans.push(this.bahans[index].nama_bahan);
+                }
+            }
         },
         computed: {
             formTitle(){
@@ -302,6 +397,7 @@
         },
         mounted(){
             this.readData();
+            this.readDataBahan();
         },
     };
 </script>

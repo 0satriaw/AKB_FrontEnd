@@ -32,12 +32,34 @@
             <v-app-bar-nav-icon color="#aa2b1d" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-toolbar-title class="title font-weight-bold grey--text text--darken-2">Owner</v-toolbar-title>
             <VSpacer />
-            <v-toolbar-items>    
-                 <v-btn text router  @click="goUser"><v-icon left color="#aa2b1d">mdi-account-circle</v-icon>
-                    Nama orang</v-btn>   
+            <v-toolbar-items rounded>
+                <v-menu offset-y >
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                        v-bind="attrs"
+                        v-on="on"
+                        router
+                        text
+                        dense
+                        rounded
+                        >
+                        <v-icon left color="#aa2b1d">mdi-account-circle</v-icon>
+                        Nama orang</v-btn>  
+                    </template>
+                    <v-list>
+                        <v-list-item
+                        @click="goProfile"
+                        >
+                            <v-list-item-title class="text-center grey--text text--darken-2" ><v-icon left color="#aa2b1d">mdi-account-circle</v-icon>Profile</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item
+                        @click="logout"
+                        >
+                            <v-list-item-title class="text-center grey--text text--darken-2"><v-icon left color="#aa2b1d">mdi-account-circle</v-icon>Logout</v-list-item-title>
+                        </v-list-item>
+                    </v-list>
+                </v-menu> 
                 <v-spacer></v-spacer>    
-                <!-- logout dibuat kebawah        -->
-                <!-- <v-btn text router  @click="logout"><v-icon>mdi-power</v-icon></v-btn>        -->
             </v-toolbar-items>
         </v-app-bar>    
         <div class="fullheight pa-5">       
@@ -68,13 +90,37 @@
                 };
             },
             methods: {
-      
-                logout(){
-                    localStorage.removeItem('id')
-                    localStorage.removeItem('token')
-                     this.$router.push({
+                goProfile(){
+                    this.$router.push({
                             name: 'login'
                         })
+                },
+                logout(){
+                    let newData={
+                        id: localStorage.getItem('id'),
+                    }
+                    this.$http.post(this.$api+'/logout',newData,{
+                            headers:{
+                            'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        }
+                        }).then(response=>{
+                            this.error_message = response.data.message;
+                            this.color ="green"
+                            this.snackbar=true;
+                            this.load=false;
+
+                            this.$router.push({
+                                name: 'login'
+                            })
+                        }).catch(error=>{
+                            this.error_message=error.response.data.message;
+                            this.color="red"
+                            this.snackbar=true;
+                            localStorage.removeItem('token')
+                            this.load=false
+                        })
+                    localStorage.removeItem('id')
+                    localStorage.removeItem('token')
                 },
                 goUser(){
                     this.$router.push({

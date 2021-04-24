@@ -8,7 +8,7 @@
                     <v-card class="rounded-xl">
                         <v-card-text>
                             <div class="layout column align-center">
-                                <img src="..\assets\akblogobulatcream.png" alt="gambar Akbb" width="150" height="150">
+                                <img src="..\assets\akb.png" alt="gambar Akb" width="200" height="200">
                                 <h1 class="flex my-4 red--text text--darken-4">Login AKB Restaurant</h1>
                             </div>
                         </v-card-text>
@@ -88,7 +88,7 @@ export default {
                         password: this.password
                     }).then(response=>{
 
-                        localStorage.setItem('id_jabatan', response.data.user.id_jabatan);//menyimpan id user yang sedang login
+                        localStorage.setItem('id', response.data.user.id_jabatan);//menyimpan id user yang sedang login
                         localStorage.setItem('token', response.data.access_token);//menyimpan auth token
                         this.error_message = response.data.message;
                         this.color ="green"
