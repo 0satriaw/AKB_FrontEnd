@@ -24,6 +24,14 @@
                 <!-- <template v-slot:[`item.no`]="{ item }">
                     {{item.id}}
                 </template> -->
+                <template v-slot:[`item.email`]="{ item }">
+                   <span v-if="item.email==null">-</span>
+                   <span v-else >{{item.email}}</span>
+                </template>
+                <template v-slot:[`item.no_telp`]="{ item }">
+                    <span v-if="item.no_telp==null">-</span>
+                   <span v-else >{{item.no_telp}}</span>
+                </template>
 
                 <template v-slot:[`item.actions`]="{ item }">
                     <v-btn icon @click="editHandler(item)">

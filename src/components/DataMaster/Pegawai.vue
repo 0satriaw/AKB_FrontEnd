@@ -34,10 +34,16 @@
                 </template>
 
                 <template v-slot:[`item.actions`]="{ item }">
-                    <v-btn icon @click="editHandler(item)">
+                    <v-btn v-if="item.id!=id&&item.nama_jabatan!='Owner'" icon @click="editHandler(item)">
                             <v-icon color="light-green darken-2">mdi-lead-pencil</v-icon>
                     </v-btn>
-                    <v-btn icon @click="deleteHandler(item)">
+                     <v-btn v-else disabled icon @click="editHandler(item)">
+                            <v-icon color="light-green darken-2">mdi-lead-pencil</v-icon>
+                    </v-btn>
+                    <v-btn v-if="item.status==0&&item.id!=id&&item.nama_jabatan!='Owner'" icon @click="deleteHandler(item)">
+                            <v-icon color="red darken-3">mdi-delete</v-icon>
+                    </v-btn>
+                    <v-btn v-else icon disabled @click="deleteHandler(item)">
                             <v-icon color="red darken-3">mdi-delete</v-icon>
                     </v-btn>
                 </template>
@@ -240,10 +246,10 @@
                     // {text:"Email", value:"email"},
                     {text:"Jenis Kelamin", value:"jenis_kelamin"},
                     {text:"No Telepon", value:"no_telp"},
-                    {text:"Jabatan", value:"nama_jabatan"},
-                    {text:"Tanggal Bergabung", value:"tanggal_bergabung"},
-                    {text:"Status", value:"status"},
-                    {text:"Actions", value:"actions"},
+                    {text:"Jabatan", value:"nama_jabatan", align: "center"},
+                    {text:"Tanggal Bergabung", value:"tanggal_bergabung", align: "center"},
+                    {text:"Status", value:"status", align: "center"},
+                    {text:"Actions", value:"actions", align: "center"},
                 ],
                 pegawai: new FormData,
                 pegawais: [],
@@ -259,7 +265,8 @@
                     status:0,
                 },
                 deleteId: '',
-                editId: ''
+                editId: '',
+                id:'',
             };
         },
         methods: {
@@ -271,7 +278,7 @@
                 }else if(nama_jabatan=="Cashier"){
                     return this.form.id_jabatan=4
                 }else{
-                    return this.form.id_jabatan=5
+                     return this.form.id_jabatan=5
                 }
             },
             setForm(){
@@ -292,6 +299,8 @@
                         }
                     }).then(response =>{
                     this.pegawais = response.data.data
+                    this.id=localStorage.getItem('id');
+                    console.log(this.id)
                 })
             },
             save(){
@@ -406,6 +415,7 @@
                     this.dialogConfirm = false;
                     this.readData();//mengambildata
                     this.resetForm();
+                    this.dialogAktif=false;
                     this.inputType='Tambah';
                 }).catch(error =>{
                     this.error_message = error.response.data.message;
@@ -416,25 +426,39 @@
             },
             editHandler(item){
                 if(item.status==0&&item.id!=1&&localStorage.getItem('id_jabatan')==2){
-                    this.inputType = 'Ubah';
-                    this.editId = item.id;
-                    console.log(this.editId)
-                    this.form.nama = item.nama;
-                    this.form.email = item.email;
-                    this.form.password = '123456789123';
-                    this.form.jenis_kelamin = item.jenis_kelamin;
-                    this.form.no_telp = item.no_telp;
-                    this.form.tanggal_bergabung = item.tanggal_bergabung;
-                    this.form.nama_jabatan = item.nama_jabatan;
-                    this.dialog = true; 
+                    // this.inputType = 'Ubah';
+                    // this.editId = item.id;
+                    // console.log(this.editId)
+                    // this.form.nama = item.nama;
+                    // this.form.email = item.email;
+                    // this.form.password = '123456789123';
+                    // this.form.jenis_kelamin = item.jenis_kelamin;
+                    // this.form.no_telp = item.no_telp;
+                    // this.form.tanggal_bergabung = item.tanggal_bergabung;
+                    // this.form.nama_jabatan = item.nama_jabatan;
+                    // this.dialog = true; 
+                    this.initForm(item)
                 }else{
-                    if(item.id==1){
-                        this.dialogAktif = false;
+                    if(item.id!=this.id&&item.status==0){
+                       this.initForm(item)
                     }else{
                         this.aktifId = item.id;
                         this.dialogAktif = true;
                     }
                 }
+            },
+            initForm(item){
+                this.inputType = 'Ubah';
+                this.editId = item.id;
+                console.log(this.editId)
+                this.form.nama = item.nama;
+                this.form.email = item.email;
+                this.form.password = '123456789123';
+                this.form.jenis_kelamin = item.jenis_kelamin;
+                this.form.no_telp = item.no_telp;
+                this.form.tanggal_bergabung = item.tanggal_bergabung;
+                this.form.nama_jabatan = item.nama_jabatan;
+                this.dialog = true; 
             },
             deleteHandler(item){
                 if( localStorage.getItem('id_jabatan')==2){

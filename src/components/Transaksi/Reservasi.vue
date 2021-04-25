@@ -15,7 +15,7 @@
                     hide-details
                 ></v-text-field>
                 <v-spacer></v-spacer>
-                <v-btn color="red darken-4" rounded dark @click="dialog =true"><v-icon left>mdi-plus</v-icon>
+                <v-btn color="red darken-4" rounded dark @click="dialog=true"><v-icon left>mdi-plus</v-icon>
                     Tambah
                 </v-btn>
             </v-card-title>
@@ -48,10 +48,18 @@
                         <span>Dinner</span>
                     </v-chip>
                 </template>
+                <template v-slot:[`item.status`]="{ item }">
+                    <v-chip v-if="item.status==0" color="success">
+                        <span>Aktif</span>
+                    </v-chip>
+                    <v-chip v-else-if="item.status==1" color="warning">
+                        <span>Selesai</span>
+                    </v-chip>
+                </template>
             </v-data-table>
         </v-card>
 
-        <v-dialog v-model="dialog" persistent max-width="700px">
+        <v-dialog v-model="dialog" persistent max-width="800px">
             <v-card class="">
                 <v-card-title class=" pa-5 justify-center red darken-4">
                     <span class="headline font-weight-bold white--text">{{ formTitle }} Data Reservasi</span>
@@ -59,42 +67,8 @@
                 <v-card-text>
                     <v-container>
                         <v-form v-model="valid" ref="form">
-                            <v-row>
-                                <v-col  v-if="this.inputType=='Tambah'" >
-                                    <v-autocomplete
-                                    label="Nama Pelanggan"
-                                    :items="pelanggans"
-                                    item-text="nama_pelanggan"
-                                    item-value="id"
-                                    v-model="form.id_pelanggan"
-                                    :rules="namaRules"
-                                    required
-                                    >
-                                    <template slot="append-outer">
-                                    <v-btn fab x-small color="red darken-4" @click="dialogPelanggan=true" :class="{' red--text text--darken-4' :valid, disabled: !valid}">
-                                        <v-icon color="white">mdi-plus</v-icon>
-                                    </v-btn>
-                                    </template>
-                                    </v-autocomplete>
-                                </v-col> 
-                                <v-col v-else>
-                                    <v-text-field
-                                        v-model="form.nama_pelanggan"
-                                        label="Nama Pelanggan"
-                                        :rules="namaRules"
-                                        required
-                                        readonly
-                                    >
-                                    <template v-slot:append-outer>
-                                    <v-btn fab x-small color="red darken-4" @click="dialogPelanggan=true" :class="{' red--text text--darken-4' :valid, disabled: !valid}">
-                                        <v-icon color="white">mdi-pencil</v-icon>
-                                    </v-btn>
-                                    </template>
-                                    </v-text-field>
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col class="col-md-5">
+                            <v-row class="pt-4">
+                                <v-col class="col-md-3">
                                      <v-menu
                                         v-model="menu2"
                                         :close-on-content-click="false"
@@ -130,36 +104,66 @@
                                         <v-radio 
                                             label="Langsung"
                                             :value="0"
+                                            :disabled="radio1"
                                         ></v-radio>
                                         <v-radio
-                                            label="Sesi 1"
+                                            label="Lunch 11:00-16:00"
                                             :value="1"
+                                            :disabled="radio2"
                                         ></v-radio>
                                         <v-radio
-                                            label="Sesi 2"
+                                            label="Dinner 17:00-21:00"
                                             :value="2"
+                                            :disabled="radio3"
                                         ></v-radio>
                                         </v-radio-group>
                                     </v-layout>
                                 </v-col>
                             </v-row>
-                            <v-row  class="wrap" align="center" justify="center">
-                                <v-col class="">
-                                    <v-select
-                                    :items="mejas"
-                                    item-text="nomor_meja"
-                                    label="Nomor Meja"
-                                    v-model="form.nomor_meja"
-                                    :rules="tipeRules"
-                                    hide-no-data
+                            <v-row  class="wrap mt-n4" align="start" justify="start">
+                                <v-col class="wrap col-md-6" align="center" justify="center" >
+                                    <v-btn  color="red darken-4" class="white--text" @click="cekMeja">
+                                         Cek Ketersediaan Meja
+                                    </v-btn>
+                                </v-col>
+                                <v-col class="col-md-5" align="center" justify="center">
+                                    <v-flex class="title font-weight-bold">
+                                         No Meja : {{this.form.nomor_meja}}
+                                    </v-flex>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col  v-if="this.inputType=='Tambah'" >
+                                    <v-autocomplete
+                                    label="Nama Pelanggan"
+                                    :items="pelanggans"
+                                    item-text="nama_pelanggan"
+                                    item-value="id"
+                                    v-model="form.id_pelanggan"
+                                    :rules="namaRules"
                                     required
                                     >
-                                     <template slot="append-outer">
-                                        <v-btn rounded small color="red darken-4" class="white--text" @click="cekMeja">
-                                         Cek Meja
-                                         </v-btn>
+                                    <template slot="append-outer">
+                                    <v-btn fab x-small color="red darken-4" @click="dialogPelanggan=true" :class="{' red--text text--darken-4' :valid, disabled: !valid}">
+                                        <v-icon color="white">mdi-plus</v-icon>
+                                    </v-btn>
                                     </template>
-                                    </v-select>
+                                    </v-autocomplete>
+                                </v-col> 
+                                <v-col v-else>
+                                    <v-text-field
+                                        v-model="form.nama_pelanggan"
+                                        label="Nama Pelanggan"
+                                        :rules="namaRules"
+                                        required
+                                        readonly
+                                    >
+                                    <template v-slot:append-outer>
+                                    <v-btn fab x-small color="red darken-4" @click="dialogPelanggan=true" :class="{' red--text text--darken-4' :valid, disabled: !valid}">
+                                        <v-icon color="white">mdi-pencil</v-icon>
+                                    </v-btn>
+                                    </template>
+                                    </v-text-field>
                                 </v-col>
                             </v-row>
                         </v-form>
@@ -239,7 +243,7 @@
                     <v-btn color="red darken-4" rounded text @click="dialogPelanggan=false">
                         Batal
                     </v-btn>
-                    <v-btn color="blue darken-1" rounded text @click="savePelanggan" :class="{' darken-1 white--text' :valid, disabled: !valid}">
+                    <v-btn color="blue darken-1" rounded text @click="pelangganHandler" :class="{' darken-1 white--text' :valid, disabled: !valid}">
                         Simpan
                     </v-btn>
                 </v-card-actions>
@@ -256,26 +260,22 @@
                 <v-card-title class="justify-center red darken-4">
                     <span class="headline font-weight-bold white--text">Ketersediaan Meja</span>
                 </v-card-title>
+                <v-card-subtitle class="mt-3 ">
+                    <span class="font-italic subtitle font-weight-thin ">*Klik untuk memilih meja</span>
+                </v-card-subtitle>
+                 <v-row class="pa-4 mx-10 my-1 elevation-2">
+                    <v-col v-for="(item, index) in mejas" :key="index" align="center" class="wrap"  justify="center" cols="3">
+                        <v-btn  color="success" v-if="item.status=='Tersedia'" @click="setNomor(item)"  medium class="d-flex  white--text">
+                                #{{item.nomor_meja}}
+                        </v-btn>
+                        <v-btn  color="error" v-if="item.status=='Tidak Tersedia'" @click="mejaError"  medium class="d-flex  white--text">
+                                #{{item.nomor_meja}}
+                        </v-btn>
+                    </v-col>
+                </v-row>
 
-                <v-card-text class="pt-5 font-weight-bold">
-                    <v-data-table class="pa-2 mx-2 elevation-3" :headers="mejaHeaders" :items="mejas" :search="search">
-                        <!-- nomer using id -->
-                        <!-- <template v-slot:[`item.no`]="{ item }">
-                            {{item.id}}
-                        </template> -->
-                        <template v-slot:[`item.status`]="{ item }">
-                            <v-chip v-if="item.status=='Tersedia'" color="success">
-                                <span>{{item.status}}</span>
-                            </v-chip>
-                            <v-chip v-else color="error">
-                                <span>{{item.status}}</span>
-                            </v-chip>
-                        </template>
-                    </v-data-table>
-                </v-card-text>
-
-                <v-card-actions class="justify-center">
-                        <v-btn color="red darken-4" rounded text @click="dialogMeja=false">
+                <v-card-actions class="py-5 justify-center">
+                        <v-btn color="red darken-4" rounded text @click="mejaHandler">
                             Kembali
                         </v-btn>
                 </v-card-actions>
@@ -338,10 +338,11 @@
                         value: "nama_pelanggan",
                     },
                     {text:"Nama Pegawai", value:"nama"},
-                    {text:"Nomor Meja", value:"nomor_meja"},
-                    {text:"Tanggal", value:"tanggal_kunjungan"},
-                    {text:"Jam", value:"jam_kunjungan"},
-                    {text:"Sesi", value:"sesi"},
+                    {text:"Nomor Meja", value:"nomor_meja", align: "center"},
+                    {text:"Sesi", value:"sesi",align: "center"},
+                    {text:"Tanggal", value:"tanggal_kunjungan", align: "center"},
+                    {text:"Jam", value:"jam_kunjungan",align: "center"},
+                    {text:"Status", value:"status",align: "center"},
                     {text:"Actions", value:"actions"},
                 ],
                 mejaHeaders:[
@@ -356,6 +357,7 @@
                 ],
                 pelanggans:[],
                 pForm:{
+                    id:'',
                     nama_pelanggan:'',
                     email:'',
                     no_telp:'',
@@ -376,13 +378,38 @@
                     id_pegawai:'',
                     jam_kunjungan:'',
                     kode_qr:'',
-                    status_hapus:''
+                    status_hapus:'',
+                    status:''
                 },
                 deleteId: '',
-                editId: ''
+                editId: '',
+                timeNow:'',
             };
         },
         methods: {
+            mejaError(){
+                this.error_message = 'Meja sudah dipesan';
+                this.color="red"
+                this.snackbar=true;
+                this.load = false;
+            },
+            setNomor(item){
+                this.form.nomor_meja=item.nomor_meja;
+                this.dialogMeja=false
+            },
+            mejaHandler(){
+                this.dialogMeja = false
+                this.readDataMeja()
+            },
+            pelangganHandler(){
+                if(this.$refs.form.validate()){
+                    if(this.inputType === 'Tambah'){
+                        this.savePelanggan()
+                    }else{
+                        this.updatePelanggan()
+                    }
+                }
+            },
             setForm(){
                    if(this.$refs.form.validate()&&this.cekReservasi()){
                         if(this.inputType === 'Tambah'){
@@ -425,6 +452,7 @@
                         }
                     }).then(response =>{
                     this.reservasis = response.data.data
+                console.log(this.reservasis);
                 })
             },
             savePelanggan(){
@@ -453,15 +481,38 @@
                         this.load = false;
                     })
             },
+            updatePelanggan(){
+                let newData = {
+                    nama_pelanggan: this.pForm.nama_pelanggan,
+                    email: this.pForm.email,
+                    no_telp: this.pForm.no_telp,
+                    status_hapus:0,
+                    }
+                    var url = this.$api + '/pelanggan/' + this.pForm.id;
+                    this.load = true
+                    this.$http.put(url, newData, {   
+                    headers:{
+                            'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        }
+                    }).then(response =>{
+                    this.error_message= response.data.message;
+                    this.color="green"
+                    this.snackbar=true;
+                    this.load = false;
+                    this.dialogPelanggan=false;
+                    this.readData();//mengambildata
+                    this.resetPForm();
+                }).catch(error =>{
+                    this.error_message = error.respons.data.message;
+                    this.color="red"
+                    this.snackbar=true;
+                    this.load = false;
+                })
+            },
             save(){
                 this.cekIdMeja()
-                // this.cekIdPelanggan()
+                this.getTime()
                 console.log(this.form.id_pelanggan)
-                var today = new Date();
-                 var time = ("0" + today.getHours()).slice(-2)   + ":" + 
-                    ("0" + today.getMinutes()).slice(-2) + ":" + 
-                    ("0" + today.getSeconds()).slice(-2);
-                // console.log(this.form.tanggal_kunjungan)
                 this.reservasi.append('id_pelanggan', this.form.id_pelanggan);
                 this.reservasi.append('id_meja', this.form.id_meja);
                 this.reservasi.append('id_pegawai', localStorage.getItem('id'));
@@ -469,14 +520,8 @@
                 this.reservasi.append('tanggal_kunjungan', this.form.tanggal_kunjungan);
                 this.reservasi.append('sesi',this.form.sesi);
                 this.reservasi.append('status_hapus',0);
-                if(this.form.sesi==0){
-                    this.reservasi.append('jam_kunjungan',time);
-                }else if(this.form.sesi==1){
-                    this.reservasi.append('jam_kunjungan','11:00:00');
-                }else{
-                    this.reservasi.append('jam_kunjungan','17:00:00');
-                }
-                    // console.log(time)
+                this.reservasi.append('status',0);
+                this.reservasi.append('jam_kunjungan',this.form.jam_kunjungan);
                 var url = this.$api + '/reservasi'
                 this.load = true
                 this.$http.post(url, this.reservasi, {
@@ -501,23 +546,8 @@
             
             },
             update(){
-                    // this.cekMeja();
-                    var today = new Date();
-                    var time = ("0" + today.getHours()).slice(-2)   + ":" + 
-                    ("0" + today.getMinutes()).slice(-2) + ":" + 
-                    ("0" + today.getSeconds()).slice(-2);
-                    // var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-                    // var time =  Date(SECONDS * 1000).toISOString().substr(11, 8)
-                    // // var now = new Moment()
-                    // // console.log(now.format("HH:mm:ss"));
                     this.cekIdMeja()
-                    if(this.form.sesi==0){
-                        this.form.jam_kunjungan= time;
-                    }else if(this.form.sesi==1){
-                       this.form.jam_kunjungan='11:00:00';
-                    }else{
-                        this.form.jam_kunjungan='17:00:00';
-                    }
+                    this.getTime()
                     console.log(this.form.jam_kunjungan);
                 let newData = {
                     id_meja: this.form.id_meja,
@@ -525,7 +555,8 @@
                     kode_qr: 'kodeqr',
                     tanggal_kunjungan: this.form.tanggal_kunjungan,
                     jam_kunjungan: this.form.jam_kunjungan,
-                    sesi: this.form.sesi
+                    sesi: this.form.sesi,
+                    status:0
                     }
                     var url = this.$api + '/reservasi/' + this.editId;
                     this.load = true
@@ -617,59 +648,80 @@
                 };
             },
             resetPForm(){
-                this.pForm ={
-                    nama_pelanggan: '',
-                    email: '',
-                    no_telp: '',
-                };
+                if(this.inputType!='Ubah'){
+                    this.pForm ={
+                        nama_pelanggan: '',
+                        email: '',
+                        no_telp: '',
+                    };
+                }
+                this.form.nama_pelanggan=this.pForm.nama_pelanggan;
             },
             cekReservasi(){
                 console.log('cekreservasi')
                 for (let index = 0; index < this.mejas.length; index++) {
                     if(this.mejas[index].status=='Tidak Tersedia'&&this.form.nomor_meja==this.mejas[index].nomor_meja){
                         this.error_message= 'Meja sudah digunakan';
-                        console.log('cekreservasi if')
-                        this.color="green"
+                        this.color="red"
                         this.snackbar=true;
                         return false;
                     }
                 }
-                console.log('cekreservasi else')
                 return true;
-            //    this.setForm()
-
             },
             cekMeja(){
+                // this.readDataMeja()
                 if(this.form.sesi==0){
-                    this.readDataMeja()
-                    return  this.dialogMeja=true;
-                }else{
                     this.tempNoMeja=[];
-                    for (let index = 0; index < this.reservasis.length; index++) {
-                        if(this.reservasis[index].tanggal_kunjungan==this.form.tanggal_kunjungan&&this.reservasis[index].sesi==this.form.sesi){
-                            this.tempNoMeja.push(this.reservasis[index].id_meja)
+                    var sesi;
+                    this.getTime()
+                    for (let index = 0; index < this.mejas.length; index++) {
+                        if(this.mejas[index].status=='Tidak Tersedia'){
+                            this.tempNoMeja.push(this.mejas[index].id)
                         }
                     }
-                    
-                    for (let index = 0; index < this.mejas.length; index++) {
-                        this.mejas[index].status='Tersedia';
+                    console.log(this.tempNoMeja)
+                    if(this.form.jam_kunjungan>'11:00:00'&&this.form.jam_kunjungan<'16:00:00'){
+                        sesi=1
+                        this.initMeja(sesi)
+                    }else if(this.form.jam_kunjungan>'17:00:00'&&this.form.jam_kunjungan<'21:00:00'){
+                        console.log(this.form.jam_kunjungan)
+                        console.log('masuk dinner')
+                        sesi=2
+                        this.initMeja(sesi)
+                    }else{
+                        this.readDataMeja()
                     }
-                    console.log(this.tempNoMeja[0]);
-                    for (let index = 0; index < this.tempNoMeja.length; index++) {
-                        for (let i = 0; i < this.mejas.length; i++) {
-                            
-                            if(this.tempNoMeja[index]==this.mejas[i].id){
-                                
-                                this.mejas[i].status='Tidak Tersedia'
-                            
-                                // console.log(this.mejas[i].status)
-                                // break;
-                            }
+                }else{
+                    // this.readDataMeja()
+                    this.tempNoMeja=[];
+                    this.initMeja(this.form.sesi)
+                }
+                this.dialogMeja=true;
+            },
+            initMeja(sesi){
+                // if(this.form.sesi!=0){
+                //     this.tempNoMeja=[];
+                // }
+                for (let index = 0; index < this.reservasis.length; index++) {
+                    if(this.reservasis[index].tanggal_kunjungan==this.form.tanggal_kunjungan&&this.reservasis[index].sesi==sesi){
+                        this.tempNoMeja.push(this.reservasis[index].id_meja)
+                    }
+                }
+                
+                for (let index = 0; index < this.mejas.length; index++) {
+                    this.mejas[index].status='Tersedia';
+                }
+
+                console.log(this.tempNoMeja);
+                for (let index = 0; index < this.tempNoMeja.length; index++) {
+                    for (let i = 0; i < this.mejas.length; i++) {
+                        
+                        if(this.tempNoMeja[index]==this.mejas[i].id){
+                            this.mejas[i].status='Tidak Tersedia'
                         }
                     }
                 }
-                    console.log(this.mejas);
-                    this.dialogMeja=true;
             },
             cekIdMeja(){
                 for (let index = 0; index < this.mejas.length; index++) {
@@ -679,21 +731,70 @@
                 }
             },
             cekIdPelanggan(item){
-                console.log(this.pelanggans)
                for (let index = this.pelanggans.length-1; index >= 0; index--) {
-                //    console.log(this.pelanggans[index].nama_pelanggan)
                    if(this.pelanggans[index].id == item.id_pelanggan){
+                       this.pForm.id = this.pelanggans[index].id
                        this.pForm.nama_pelanggan = this.pelanggans[index].nama_pelanggan
                        this.pForm.email = this.pelanggans[index].email
                        this.pForm.no_telp = this.pelanggans[index].no_telp
                    }
                }
-            //    console.log(this.form.nama_pelanggan)
             },
+            getTime(){
+                var today = new Date();
+                var time = ("0" + today.getHours()).slice(-2)   + ":" + 
+                    ("0" + today.getMinutes()).slice(-2) + ":" + 
+                    ("0" + today.getSeconds()).slice(-2);
+                
+                if(this.form.sesi==0){
+                    this.form.jam_kunjungan=time
+                }else if(this.form.sesi==1){
+                    this.form.jam_kunjungan='11:00:00'
+                }else{
+                    this.form.jam_kunjungan='17:00:00'
+                }
+            }
         },
         computed: {
             formTitle(){
                 return this.inputType
+            },
+            radio1(){
+                var date = new Date().toISOString().substr(0, 10)
+                if(this.form.tanggal_kunjungan!=date){
+                    return true;
+                } 
+                return false;
+            },
+            radio2(){
+                var date = new Date().toISOString().substr(0, 10)
+                var today = new Date();
+                var time = ("0" + today.getHours()).slice(-2)   + ":" + 
+                    ("0" + today.getMinutes()).slice(-2) + ":" + 
+                    ("0" + today.getSeconds()).slice(-2);
+                if(this.form.tanggal_kunjungan==date){
+                    if(time>'11:00:00'){
+                        return true
+                    }else{
+                        return false
+                    }
+                } 
+                return false;
+            },
+            radio3(){
+                var date = new Date().toISOString().substr(0, 10)
+                var today = new Date();
+                var time = ("0" + today.getHours()).slice(-2)   + ":" + 
+                    ("0" + today.getMinutes()).slice(-2) + ":" + 
+                    ("0" + today.getSeconds()).slice(-2);
+                if(this.form.tanggal_kunjungan==date){
+                    if(time>'17:00:00'){
+                        return true
+                    }else{
+                        return false
+                    }
+                } 
+                return false;
             },
         },
         mounted(){

@@ -87,9 +87,9 @@ export default {
                         email: this.email,
                         password: this.password
                     }).then(response=>{
-
-                        localStorage.setItem('id', response.data.user.id_jabatan);//menyimpan id user yang sedang login
+                        localStorage.setItem('id', response.data.user.id);//menyimpan id user yang sedang login
                         localStorage.setItem('token', response.data.access_token);//menyimpan auth token
+                        localStorage.setItem('id_jabatan',response.data.user.id_jabatan);
                         this.error_message = response.data.message;
                         this.color ="green"
                         this.snackbar=true;

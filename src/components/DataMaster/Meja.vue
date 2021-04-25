@@ -15,7 +15,10 @@
                     hide-details
                 ></v-text-field>
                 <v-spacer></v-spacer>
-                <v-btn color="red darken-4" rounded dark @click="dialog =true"><v-icon left>mdi-plus</v-icon>
+                <v-btn color="red darken-4" v-if="id_jabatan==2" rounded dark @click="dialog =true"><v-icon left>mdi-plus</v-icon>
+                    Tambah
+                </v-btn>
+                <v-btn color="red darken-4" v-else disabled rounded dark @click="dialog =true"><v-icon left>mdi-plus</v-icon>
                     Tambah
                 </v-btn>
             </v-card-title>
@@ -36,7 +39,10 @@
                     <v-btn icon @click="editHandler(item)">
                             <v-icon color="light-green darken-2">mdi-lead-pencil</v-icon>
                     </v-btn>
-                    <v-btn icon @click="deleteHandler(item.id)">
+                    <v-btn v-if="id_jabatan==2" icon @click="deleteHandler(item.id)">
+                            <v-icon color="red darken-3">mdi-delete</v-icon>
+                    </v-btn>
+                    <v-btn v-else disabled icon @click="deleteHandler(item.id)">
                             <v-icon color="red darken-3">mdi-delete</v-icon>
                     </v-btn>
                 </template>
@@ -138,7 +144,8 @@
                     status_hapus:0,
                 },
                 deleteId: '',
-                editId: ''
+                editId: '',
+                id_jabatan:'',
             };
         },
         methods: {
@@ -160,6 +167,7 @@
                         }
                     }).then(response =>{
                     this.mejas = response.data.data
+                    this.id_jabatan = localStorage.getItem('id_jabatan');
                 })
             },
             save(){
