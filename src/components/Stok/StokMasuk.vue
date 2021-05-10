@@ -74,6 +74,7 @@
                                             ></v-text-field>
                                         </template>
                                         <v-date-picker
+                                         :max="new Date().toISOString().substr(0, 10)"
                                         color="#F9A825"
                                         v-model="form.tanggal_masuk"
                                         @input="menu2 = false"
@@ -192,6 +193,7 @@
                     biaya: '',
                     tanggal_masuk:new Date().toISOString().substr(0, 10),
                     nama_bahan:'',
+                    status_hapus:''
                 },
                 deleteId: '',
                 editId: ''
@@ -224,7 +226,6 @@
                         }
                     }).then(response =>{
                     this.stokmasuks = response.data.data
-                  
                 })
             },
             readDataBahan(){
@@ -244,6 +245,7 @@
                 this.stokmasuk.append('jumlah', this.form.jumlah);
                 this.stokmasuk.append('biaya', this.form.biaya);
                 this.stokmasuk.append('tanggal_masuk', this.form.tanggal_masuk);
+                this.stokmasuk.append('status_hapus', 0);
 
                 var url = this.$api + '/stokmasuk'
                 this.load = true
@@ -272,7 +274,8 @@
                     id_bahan: this.form.id_bahan,
                     jumlah: this.form.jumlah,
                     biaya: this.form.biaya,
-                    tanggal_masuk: this.form.tanggal_masuk
+                    tanggal_masuk: this.form.tanggal_masuk,
+                    status_hapus:0
                     }
                     var url = this.$api + '/stokmasuk/' + this.editId;
                     this.load = true
@@ -296,54 +299,28 @@
                     this.load = false;
                 })
             },
-            //hapus Data Stok Masuk soft delete?
-            // deleteDatasoft(){
-            //     //menghapus Data Stok Masuk
-            //    let newData = {
-            //         status_hapus: 1
-            //         }
-            //         var url = this.$api + '/dbahan/' + this.deleteId;
-            //         this.load = true
-            //         this.$http.put(url, newData, {   
-            //         headers:{
-            //                 'Authorization': 'Bearer ' + localStorage.getItem('token')
-            //             }
-            //         }).then(response =>{
-            //         this.error_message= response.data.message;
-            //         this.color="green"
-            //         this.snackbar=true;
-            //         this.load = false;
-            //         this.dialogConfirm = false;
-            //         this.readData();//mengambildata
-            //         this.resetForm();
-            //         this.inputType='Tambah';
-            //     }).catch(error =>{
-            //         this.error_message = error.response.data.message;
-            //         this.color="red"
-            //         this.snackbar=true;
-            //         this.load = false;
-            //     })
-            // },
+            // hapus Data Stok Masuk soft delete?
             deleteData(){
-                //menghapus data produk
-                var url = this.$api+ '/stokmasuk/'+this.deleteId;
-                //data dihapus berdasarkan id
-                this.$http.delete(url, {
+               let newData = {
+                        status_hapus: 1
+                    }
+                    var url = this.$api + '/dstokmasuk/' + this.deleteId;
+                    this.load = true
+                    this.$http.put(url, newData, {   
                     headers:{
                             'Authorization': 'Bearer ' + localStorage.getItem('token')
                         }
                     }).then(response =>{
-                    this.dialogConfirm = false;
                     this.error_message= response.data.message;
                     this.color="green"
                     this.snackbar=true;
                     this.load = false;
-                    this.close();
+                    this.dialogConfirm = false;
                     this.readData();//mengambildata
                     this.resetForm();
                     this.inputType='Tambah';
                 }).catch(error =>{
-                    this.error_message = error.data.message;
+                    this.error_message = error.response.data.message;
                     this.color="red"
                     this.snackbar=true;
                     this.load = false;

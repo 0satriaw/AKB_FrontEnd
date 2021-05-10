@@ -352,6 +352,7 @@
                             this.snackbar=true;
                             this.load = false;
                             this.dialogPassword=false;
+                            this.resetFormPass();
                             this.readData();//mengambildata
                         }).catch(error =>{
                             this.error_message = error.response.data.message;
@@ -388,6 +389,7 @@
                     localStorage.removeItem('id')
                     localStorage.removeItem('token')
                     localStorage.removeItem('id_jabatan')
+                     localStorage.removeItem('nama')
                 },
                 initNavbar(){
                     if(localStorage.getItem('id_jabatan')==1){

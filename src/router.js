@@ -51,10 +51,28 @@ const router = new VueRouter({
                     component: importComponent('Stok/StokMasuk')
                 },
                 {
+                    path: "/stokkeluar",
+                    name: "StokKeluar",
+                    meta: {title: 'Stok Keluar'},
+                    component: importComponent('Stok/StokKeluar')
+                },
+                {
                     path: "/reservasi",
                     name: "Reservasi",
                     meta: {title: 'Reservasi'},
                     component: importComponent('Transaksi/Reservasi')
+                },
+                {
+                    path: "/menu",
+                    name: "Menu",
+                    meta: {title: 'Menu'},
+                    component: importComponent('Transaksi/Menu')
+                },
+                {
+                    path: "/pesanan",
+                    name: "Pesanan",
+                    meta: {title: 'Pesanan'},
+                    component: importComponent('Transaksi/Pesanan')
                 },
                 // To do list
             //     {

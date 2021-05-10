@@ -90,14 +90,27 @@ export default {
                         localStorage.setItem('id', response.data.user.id);//menyimpan id user yang sedang login
                         localStorage.setItem('token', response.data.access_token);//menyimpan auth token
                         localStorage.setItem('id_jabatan',response.data.user.id_jabatan);
+                        localStorage.setItem('nama',response.data.user.nama);
                         this.error_message = response.data.message;
                         this.color ="green"
                         this.snackbar=true;
                         this.load=false;
-                        console.log('login')
-                        this.$router.push({
-                            name: 'Pegawai'
-                        })
+                        if(localStorage.getItem('id_jabatan')==1||localStorage.getItem('id_jabatan')==2){
+                            console.log('login1')
+                            this.$router.push({
+                                name: 'Pegawai'
+                            })  
+                        }else if(localStorage.getItem('id_jabatan')==4||localStorage.getItem('id_jabatan')==5){
+                           this.$router.push({
+                                name: 'Pelanggan'
+                            })  
+                            console.log('login2')
+                        }else{
+                            console.log('login3')
+                           this.$router.push({
+                                name: 'Bahan'
+                            })  
+                        }
                         console.log('lewat')
                     }).catch(error=>{
                         this.error_message=error.response.data.message;

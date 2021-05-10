@@ -193,6 +193,8 @@
                 this.pelanggan.append('email', this.form.email);
                 this.pelanggan.append('no_telp', this.form.no_telp);
                 this.pelanggan.append('status_hapus', 0);
+                console.log(this.form.email)
+                console.log(this.form.no_telp)
 
                 var url = this.$api + '/pelanggan/'
                 this.load = true

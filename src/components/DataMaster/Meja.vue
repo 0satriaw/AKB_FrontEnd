@@ -133,8 +133,8 @@
                         sortable: true,
                         value: "nomor_meja",
                     },
-                    {text:"Status Ketersediaan", value:"status"},
-                    {text:"Actions", value:"actions"},
+                    {text:"Status Ketersediaan", value:"status",align: "center"},
+                    {text:"Actions", value:"actions" , align: "start"},
                 ],
                 meja: new FormData,
                 mejas: [],
@@ -191,6 +191,7 @@
                         this.resetForm();
                     }).catch(error => {
                         this.error_message=error.response.data.message.nomor_meja;
+                        this.error_message='Nomor meja tidak boleh sama'
                         this.color="red"
                         this.snackbar=true;
                         this.load = false;

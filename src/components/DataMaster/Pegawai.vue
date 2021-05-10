@@ -330,6 +330,7 @@
                         this.resetForm();
                     }).catch(error => {
                         this.error_message=error.response.data.message;
+                        this.error_message='Email pegawai tidak boleh sama'
                         this.color="red"
                         this.snackbar=true;
                         this.load = false;

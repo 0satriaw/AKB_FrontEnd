@@ -206,7 +206,7 @@
                 </v-card-title>
                 <v-card-text>
                     <v-container>
-                        <v-form v-model="valid" ref="form">
+                        <v-form v-model="valid" ref="form2">
                             <v-row>
                                 <v-col>
                                     <v-text-field
@@ -282,6 +282,40 @@
             </v-card>
       </v-dialog>
 
+      <v-container v-show="true" class="pa-4 ma-4"  max-width="420px"
+            max-height="200px" justify="center" align="center" content="center">
+            <v-row class="layout column align-center">
+                    <img src="..\..\assets\akb.png" alt="gambar Akb" width="150" height="150">
+            </v-row>
+            <v-row class="layout column align-center">
+               <!-- <template>
+                    <qrcode-vue value="asda" :size="100" level="H" />
+            </template> -->
+                <img src="..\..\assets\akb.png" alt="gambar Akb" width="200" height="200">
+            </v-row>
+            <v-row class="layout column align-center my-8">
+                    <template class="font-weight-bold">
+                            <h5>
+                            {{new Date().toString().slice(0,25)}}
+                            </h5>
+                    </template>
+            </v-row>
+            <v-row class="layout column align-center mt-n7">
+                    <template >
+                            <h5 class="subtitle">
+                            Printed By {{nama}}
+                            </h5>
+                    </template>
+            </v-row>
+             <v-row class="layout column align-center my-10">
+                    <template class="font-weight-bold">
+                            <h4>
+                                FUN PLACE TO GRILL
+                            </h4>
+                    </template>
+            </v-row>
+      </v-container>
+
         <v-snackbar v-model="snackbar" :color="color" timeout="2000" bottom>
             {{error_message}}
         </v-snackbar>
@@ -289,6 +323,7 @@
 </template>
 
 <script>
+    // import QrcodeVue from 'qrcode.vue'
     export default {
         name:"Bahan",
         data(){
@@ -383,9 +418,13 @@
                 },
                 deleteId: '',
                 editId: '',
+                nama :'',
                 timeNow:'',
             };
         },
+        // components: {
+        //     QrcodeVue,
+        // },
         methods: {
             mejaError(){
                 this.error_message = 'Meja sudah dipesan';
@@ -402,7 +441,7 @@
                 this.readDataMeja()
             },
             pelangganHandler(){
-                if(this.$refs.form.validate()){
+                if(this.$refs.form2.validate()){
                     if(this.inputType === 'Tambah'){
                         this.savePelanggan()
                     }else{
@@ -411,6 +450,7 @@
                 }
             },
             setForm(){
+                console.log('setForm')
                    if(this.$refs.form.validate()&&this.cekReservasi()){
                         if(this.inputType === 'Tambah'){
                             this.save()
@@ -453,6 +493,7 @@
                     }).then(response =>{
                     this.reservasis = response.data.data
                 console.log(this.reservasis);
+                this.nama = localStorage.getItem('nama');
                 })
             },
             savePelanggan(){
@@ -510,6 +551,7 @@
                 })
             },
             save(){
+                console.log('save')
                 this.cekIdMeja()
                 this.getTime()
                 console.log(this.form.id_pelanggan)
