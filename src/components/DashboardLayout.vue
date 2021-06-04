@@ -396,6 +396,7 @@
                         this.items = [
                             { title: "Pegawai", to: "/pegawai", icon:"mdi-account-box-multiple"},
                             { title: "Laporan", to: "/laporan", icon:"mdi-book-multiple"},
+                            { title: "Laporan", to: "/laporanpenjualan", icon:"mdi-book-multiple"},
                         ]
                     }else if(localStorage.getItem('id_jabatan')==2){
                         this.items = [

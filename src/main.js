@@ -8,7 +8,9 @@ import axios from 'axios'
 Vue.config.productionTip = false;
 
 Vue.prototype.$http = axios;
-Vue.prototype.$api ='http://127.0.0.1:8000/api';
+Vue.prototype.$api ='https://atmakb.xyz/public/api';
+// Vue.prototype.$api ='http://127.0.0.1:8000/api';
+
 
 new Vue({
   vuetify,

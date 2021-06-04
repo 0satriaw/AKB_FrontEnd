@@ -1,7 +1,7 @@
 <!-- @format -->
 <template>
     <v-main class="list py-2 mx-4">
-        <h3 class="text-center display-2 font-weight-bold mb-5 red--text text--darken-4">Data Stok Masuk</h3>
+        <h3 class="text-center display-2 font-weight-bold mb-5 red--text text--darken-4">Data Stok Keluar</h3>
         <v-card class="py-3">
             <v-card-title>
                 <v-text-field
@@ -20,6 +20,14 @@
                 </v-btn>
             </v-card-title>
             <v-data-table class="pa-2 mx-2 elevation-3" :headers="headers" :items="stokkeluars" :search="search">
+                <template v-slot:[`item.status`]="{ item }">
+                    <v-chip v-if="item.status==0" color="success">
+                        <span>Dibuang</span>
+                    </v-chip>
+                    <v-chip v-else color="warning">
+                        <span>Pesanan</span>
+                    </v-chip>
+                </template>
                 <!-- nomer using id -->
                 <!-- <template v-slot:[`item.no`]="{ item }">
                     {{item.id}}
@@ -164,6 +172,7 @@
                         value: "nama_bahan",
                     },
                     {text:"Stok Keluar",align: "center", value:"jumlah"},
+                    {text:"Status",align: "center", value:"status"},
                     {text:"Tanggal Keluar", align: "center", value:"tanggal_keluar"},
                 ],
                 stokkeluar: new FormData,
@@ -176,6 +185,7 @@
                     jumlah: '',
                     tanggal_keluar:new Date().toISOString().substr(0, 10),
                     nama_bahan:'',
+                    status:'',
                 },
                 deleteId: '',
                 editId: ''
@@ -225,7 +235,7 @@
                 this.stokkeluar.append('id_bahan', this.form.id_bahan);
                 this.stokkeluar.append('jumlah', this.form.jumlah);
                 this.stokkeluar.append('tanggal_keluar', this.form.tanggal_keluar);
-
+                this.stokkeluar.append('status',0);
                 var url = this.$api + '/stokkeluar'
                 this.load = true
                 this.$http.post(url, this.stokkeluar, {

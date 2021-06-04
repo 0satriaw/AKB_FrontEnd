@@ -26,7 +26,7 @@
                 </template> -->
 
                 <template v-slot:[`item.actions`]="{ item }">
-                    <v-btn icon click="">
+                    <v-btn icon @click="generateQR(item)">
                             <v-icon color="black">mdi-qrcode</v-icon>
                     </v-btn>
                      <v-btn icon @click="editHandler(item)">
@@ -36,6 +36,8 @@
                             <v-icon color="red darken-3">mdi-delete</v-icon>
                     </v-btn>
                 </template>
+
+                
 
                  <template v-slot:[`item.sesi`]="{ item }">
                     <v-chip v-if="item.sesi=='0'" color="primary">
@@ -282,39 +284,61 @@
             </v-card>
       </v-dialog>
 
-      <v-container v-show="true" class="pa-4 ma-4"  max-width="420px"
-            max-height="200px" justify="center" align="center" content="center">
-            <v-row class="layout column align-center">
-                    <img src="..\..\assets\akb.png" alt="gambar Akb" width="150" height="150">
-            </v-row>
-            <v-row class="layout column align-center">
-               <!-- <template>
-                    <qrcode-vue value="asda" :size="100" level="H" />
-            </template> -->
-                <img src="..\..\assets\akb.png" alt="gambar Akb" width="200" height="200">
-            </v-row>
-            <v-row class="layout column align-center my-8">
-                    <template class="font-weight-bold">
-                            <h5>
-                            {{new Date().toString().slice(0,25)}}
-                            </h5>
-                    </template>
-            </v-row>
-            <v-row class="layout column align-center mt-n7">
-                    <template >
-                            <h5 class="subtitle">
-                            Printed By {{nama}}
-                            </h5>
-                    </template>
-            </v-row>
-             <v-row class="layout column align-center my-10">
-                    <template class="font-weight-bold">
-                            <h4>
-                                FUN PLACE TO GRILL
-                            </h4>
-                    </template>
-            </v-row>
-      </v-container>
+        <template>
+                <vue-html2pdf
+                    :show-layout="false"
+                    :float-layout="true"
+                    :enable-download="true"
+                    :preview-modal="true"
+                    :paginate-elements-by-height="1400"
+                    filename="QR Reservasi"
+                    :pdf-quality="2"
+                    :manual-pagination="false"
+                    pdf-format="a6"
+                    pdf-orientation="portrait"
+                    pdf-content-width="400px" 
+            
+                    @progress="onProgress($event)"
+                    @hasStartedGeneration="hasStartedGeneration()"
+                    @hasGenerated="hasGenerated($event)"
+                    ref="html2Pdf"
+                >
+                    <section slot="pdf-content" class="text-align:center mt-25">
+                        <v-container  class="pa-4 mt-9"
+                             justify="center" align="center" content="center">
+                            <v-row class="layout column align-center">
+                                    <img src="..\..\assets\akb.png" alt="gambar Akb" class="qr-align-gambar"  style="margin-top = 500px" width="200px" height="150px">
+                            </v-row>
+                            <v-row class=" mt-8 layout column align-center">
+                            <template>
+                                    <qrcode-vue :value="qrValue" class="qr-align-gambarqr" :size="200" level="H" />
+                            </template>
+                            </v-row>
+                            <v-row class="layout text-align:center column align-center my-8">
+                                    <template class="font-weight-bold">
+                                            <h5 class="qr-align-time">
+                                            {{new Date().toString().slice(0,25)}}
+                                            </h5>
+                                    </template>
+                            </v-row>
+                            <v-row class="layout column align-center mt-n7">
+                                    <template >
+                                            <h5 class="subtitle qr-align-nama">
+                                            Printed By {{nama}}
+                                            </h5>
+                                    </template>
+                            </v-row>
+                            <v-row class="layout column align-center my-10">
+                                    <template class="font-weight-bold">
+                                            <h4 class="qr-align-akb">
+                                                FUN PLACE TO GRILL
+                                            </h4>
+                                    </template>
+                            </v-row>
+                    </v-container>
+                    </section>
+                </vue-html2pdf>
+        </template>
 
         <v-snackbar v-model="snackbar" :color="color" timeout="2000" bottom>
             {{error_message}}
@@ -323,7 +347,8 @@
 </template>
 
 <script>
-    // import QrcodeVue from 'qrcode.vue'
+    import QrcodeVue from 'qrcode.vue'
+    import VueHtml2pdf from 'vue-html2pdf'
     export default {
         name:"Bahan",
         data(){
@@ -336,6 +361,7 @@
                 inputType: 'Tambah',
                 load: false,
                 snackbar: false,
+                qrValue:'',
                 error_message:'',
                 color: '',
                 search: null,
@@ -422,10 +448,15 @@
                 timeNow:'',
             };
         },
-        // components: {
-        //     QrcodeVue,
-        // },
+        components: {
+            QrcodeVue,
+            VueHtml2pdf,
+        },
         methods: {
+             generateQR (item) {
+                this.qrValue = item.kode_qr;
+                this.$refs.html2Pdf.generatePdf()
+            },
             mejaError(){
                 this.error_message = 'Meja sudah dipesan';
                 this.color="red"
@@ -555,10 +586,12 @@
                 this.cekIdMeja()
                 this.getTime()
                 console.log(this.form.id_pelanggan)
+                this.form.kode_qr = Math.random().toString(36).slice(2);
+                console.log(this.kode_qr)
                 this.reservasi.append('id_pelanggan', this.form.id_pelanggan);
                 this.reservasi.append('id_meja', this.form.id_meja);
                 this.reservasi.append('id_pegawai', localStorage.getItem('id'));
-                this.reservasi.append('kode_qr', 'kodeqr');
+                this.reservasi.append('kode_qr', this.form.kode_qr);
                 this.reservasi.append('tanggal_kunjungan', this.form.tanggal_kunjungan);
                 this.reservasi.append('sesi',this.form.sesi);
                 this.reservasi.append('status_hapus',0);
@@ -594,7 +627,7 @@
                 let newData = {
                     id_meja: this.form.id_meja,
                     id_pegawai: localStorage.getItem('id'),
-                    kode_qr: 'kodeqr',
+                    kode_qr: this.form.kode_qr,
                     tanggal_kunjungan: this.form.tanggal_kunjungan,
                     jam_kunjungan: this.form.jam_kunjungan,
                     sesi: this.form.sesi,
@@ -657,6 +690,7 @@
                 this.cekIdPelanggan(item);
                 this.form.nama_pelanggan = item.nama_pelanggan;
                 this.form.tanggal_kunjungan = item.tanggal_kunjungan;
+                this.form.kode_qr = item.kode_qr;
                 this.form.sesi = item.sesi;
                 this.form.nomor_meja = item.nomor_meja;
                 this.dialog = true; 
@@ -845,3 +879,27 @@
         },
     };
 </script>
+<style scoped>
+    .qr-align-gambar{
+            margin-top: auto;
+            margin-left: auto;
+            margin-right: auto;
+    }
+    .qr-align-gambarqr{
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+    }
+    .qr-align-time{
+        margin-top: 10px;
+        text-align: center;
+    }
+    .qr-align-nama{
+          margin-top: 10px;
+            text-align: center;
+    }
+    .qr-align-akb{
+          margin-top: 20px;
+            text-align: center;
+    }
+</style>

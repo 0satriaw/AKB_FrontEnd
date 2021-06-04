@@ -27,6 +27,12 @@ const router = new VueRouter({
                     component: importComponent('DataMaster/Bahan')
                 },
                 {
+                    path: "/kartu",
+                    name: "Kartu",
+                    meta: {title: 'Kartu'},
+                    component: importComponent('DataMaster/Kartu')
+                },
+                {
                     path: "/pelanggan",
                     name: "Pelanggan",
                     meta: {title: 'Pelanggan'},
@@ -73,6 +79,18 @@ const router = new VueRouter({
                     name: "Pesanan",
                     meta: {title: 'Pesanan'},
                     component: importComponent('Transaksi/Pesanan')
+                },
+                {
+                    path: "/transaksi",
+                    name: "Transaksi",
+                    meta: {title: 'Transaksi'},
+                    component: importComponent('Transaksi/Transaksi')
+                },
+                {
+                    path: "/laporan",
+                    name: "Laporan",
+                    meta: {title: 'Laporan'},
+                    component: importComponent('Transaksi/Laporan')
                 },
                 // To do list
             //     {

@@ -207,7 +207,7 @@
                 this.bahan.append('satuan', this.form.satuan);
                 this.bahan.append('status_hapus', 0);
 
-                var url = this.$api + '/bahan/'
+                var url = this.$api + '/bahan'
                 this.load = true
                 this.$http.post(url, this.bahan, {
                     headers: {
@@ -306,6 +306,7 @@
                 this.inputType = 'Tambah';
             },
             cancel(){
+                this.$refs.form.reset();
                 this.resetForm();
                 this.readData();
                 this.dialog = false;

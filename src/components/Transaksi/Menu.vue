@@ -63,7 +63,7 @@
                         >
                             <v-img
                             height="250"
-                            :src="'http://127.0.0.1:8000'+item.gambar"
+                            :src="'http://atmakb.xyz/public'+item.gambar"
                             ></v-img>
 
                             <v-card-title>{{item.nama_menu}}</v-card-title>
@@ -82,13 +82,13 @@
                             <v-card-title class="mt-n9 justify-center">Harga : {{item.harga}}</v-card-title>
 
                             <v-card-actions class=" mt-n4 justify-center">
-                            <v-btn
+                            <!-- <v-btn
                                 color="red darken-4"
                                 text
                                 @click="editHandler(item)"
                             >
                                 Detail
-                            </v-btn>
+                            </v-btn> -->
                              <v-btn
                                 color="blue darken-1"
                                 text
@@ -154,7 +154,7 @@
                                     :items="bahans"
                                     item-text="nama_bahan"
                                     item-value="id"
-                                    :rules="namaRules"
+                                    :rules="bahanRules"
                                     ></v-select>
                                 </v-col>
                                 <v-col>
@@ -272,6 +272,9 @@
                 valid: false,
                 namaRules:[
                     (v) => !!v || 'Nama Menu tidak boleh kosong ',
+                ],
+                bahanRules:[
+                    (v) => !!v || 'Nama Bahan tidak boleh kosong ',
                 ],
                 tipeRules:[
                     (v) => !!v || 'Tipe Menu tidak boleh kosong',
@@ -502,7 +505,7 @@
                 this.form.harga = item.harga;
                 this.form.id_bahan = item.id_bahan
                 this.form.deskripsi = item.deskripsi;
-                this.url = "http://127.0.0.1:8000"+item.gambar;
+                this.url = "http://atmakb.xyz/public"+item.gambar;
                 this.dialog = true; 
             },
             deleteHandler(id){
